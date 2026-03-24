@@ -1,9 +1,10 @@
 import { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
-import { Container, Link, Stack, Table, TableBody, TableCell, TableContainer, TableHead, TableRow } from '@mui/material';
+import { Container, Link, Stack, Tab, Table, TableBody, TableCell, TableContainer, TableHead, TableRow } from '@mui/material';
 
 import SongCard from '../components/SongCard';
 import { formatDuration, formatReleaseDate } from '../helpers/formatter';
+import { song } from '../../../server/routes';
 const config = require('../config.json');
 
 export default function AlbumInfoPage() {
@@ -58,17 +59,19 @@ export default function AlbumInfoPage() {
               // TODO (TASK 24): render the table content by mapping the songData array to <TableRow> elements
               // Hint: the skeleton code for the very first row is provided for you. Fill out the missing information and then use a map function to render the rest of the rows.
               // Hint: it may be useful to refer back to LazyTable.js
-              <TableRow key={songData[0].song_id}>
-                <TableCell key='#'>{songData[0].number}</TableCell>
-                <TableCell key='Title'>
-                  <Link onClick={() => setSelectedSongId(songData[0].song_id)}>
-                    Replace me
-                  </Link>
-                </TableCell>
-                <TableCell key='Plays'>Replace me</TableCell>
-                <TableCell key='Duration'>Replace me (use the formatDuration helper function, see SongCard.js for an example)</TableCell>
-              </TableRow>
-            }
+
+              songData.map((song) => (
+                <TableRow key={song.song_id}>
+                  <TableCell>{song.number}</TableCell>
+                  <TableCell>
+                    <Link onClick={() => setSelectedSongId(song.song_id)}>
+                      {song.title}
+                    </Link>
+                  </TableCell>
+                  <TableCell key='Plays'>{song.plays}</TableCell>
+                  <TableCell key='Duration'>{formatDuration(song.duration)}</TableCell>
+                </TableRow>
+              ))}
           </TableBody>
         </Table>
       </TableContainer>

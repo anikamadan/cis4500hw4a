@@ -43,10 +43,27 @@ export default function SongsPage() {
         // To accomplish this, we use a map with spread syntax (https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/Spread_syntax)
         const songsWithId = resJson.map((song) => ({ id: song.song_id, ...song }));
         setData(songsWithId);
-      });
+      })
       // TODO (TASK 27): handle errors that could happen in the backend api call, and alert the user accordingly
       // Hint: What is the equivalent of try/catch when using promises?
+      .catch(err => {
+        console.error(err);
+        alert("Search failed. Please try again later.");
+      });
   }
+
+  const surpriseMe = () => {
+    const randomRange = () => {
+      const v1 = Math.random();
+      const v2 = Math.random();
+      return [Math.min(v1, v2), Math.max(v1, v2)];
+    };
+    setEnergy(randomRange());
+    setValence(randomRange());
+    setDanceability(randomRange());
+    // Call search after state updates (or simply trigger search manually)
+    search();
+  };
 
   // This defines the columns of the table of songs used by the DataGrid component.
   // The format of the columns array and the DataGrid component itself is very similar to our
@@ -113,12 +130,46 @@ export default function SongsPage() {
         </Grid>
         {/* TODO (TASK 25): add sliders for danceability, energy, and valence (they should be all in the same row of the Grid) */}
         {/* Hint: consider what value xs should be to make them fit on the same row. Set max, min, and a reasonable step. Is valueLabelFormat is necessary? */}
+        <Grid item xs={4}>
+        <p>Danceability</p>
+          <Slider
+            value={danceability}
+            min={0} max={1} step={0.01}
+            onChange={(e, val) => setDanceability(val)}
+            valueLabelDisplay='auto'
+          />
+        </Grid>
+        <Grid item xs={4}>
+          <p>Energy</p>
+          <Slider
+            value={energy}
+            min={0} max={1} step={0.01}
+            onChange={(e, val) => setEnergy(val)}
+            valueLabelDisplay='auto'
+          />
+        </Grid>
+        <Grid item xs={4}>
+          <p>Valence</p>
+          <Slider
+            value={valence}
+            min={0} max={1} step={0.01}
+            onChange={(e, val) => setValence(val)}
+            valueLabelDisplay='auto'
+          />
+        </Grid>
       </Grid>
       <Button onClick={() => search() } style={{ left: '50%', transform: 'translateX(-50%)' }}>
         Search
       </Button>
       {/* TODO (TASK 26): add a "surprise me" button that randomly selects filters for energy, valence, and danceability and searches for it */}
       {/* Hint: Math.random() is your friend */}
+      <Button 
+        onClick={surpriseMe} 
+        style={{ left: '50%', transform: 'translateX(-50%)', marginLeft: '10px' }}
+        variant="outlined"
+      >
+        Surprise Me!
+      </Button>
       <h2>Results</h2>
       {/* Notice how similar the DataGrid component is to our LazyTable! What are the differences? */}
       <DataGrid
